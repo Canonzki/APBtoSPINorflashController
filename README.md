@@ -2,6 +2,7 @@
 A flash Controller for amba/APB to SPI.
 
 ##1.Repository
+...
 
 ###about
 this repository is for my girlfriend Morpheus to study how to play FPGA.
