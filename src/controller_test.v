@@ -1,5 +1,8 @@
 `timescale 1 ns / 100 ps
 
+`define APBBITWIDE 32
+`define SPIBITWIDE 8
+
 module controller_test()
 
 	reg p_clk;
@@ -36,6 +39,11 @@ module controller_test()
 									.s_clk(s_clk),   
 									.s_css(s_css),	
 									);
+
+	initial begin
+		$fsdbDumpfile("test.fsdb");
+		$fsdbDumpvars;
+	end
 
 
 endmodule

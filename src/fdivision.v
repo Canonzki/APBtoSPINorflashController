@@ -1,4 +1,4 @@
-`define N 4
+//`define N 4
 
 module fdivision(clk_out,clk_in,rst);
 
@@ -8,6 +8,8 @@ input rst;
 
 reg [1:0] cnt;
 reg clk_out;
+
+parameter N=4;
 
 
 	always @ (posedge clk_in or negedge rst) begin

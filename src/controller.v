@@ -40,7 +40,9 @@ module controller(
 	output s_css;
 
 	reg [`APBBITWIDE-1:0] p_addr;
-	reg [`APBBITWIDE-1:0] p_data;
+	//reg [`APBBITWIDE-1:0] p_data;
+
+	reg s_css;
 
 	always @(*) begin
 		if (p_reset_n == 1'b0) begin
