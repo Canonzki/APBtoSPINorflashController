@@ -39,6 +39,9 @@ module controller(
 	output s_clk;
 	output s_css;
 
+	wire p_clk;
+	wire s_clk;
+
 	reg [`APBBITWIDE-1:0] p_addr;
 	//reg [`APBBITWIDE-1:0] p_data;
 

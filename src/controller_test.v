@@ -3,7 +3,7 @@
 `define APBBITWIDE 32
 `define SPIBITWIDE 8
 
-module controller_test()
+module controller_test();
 
 	reg p_clk;
 	reg p_reset_n;
