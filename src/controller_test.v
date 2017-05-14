@@ -13,8 +13,8 @@ module controller_test();
 	reg p_enable;
 	wire [`APBBITWIDE-1:0] p_data;
 
-	reg [`SPIBITWIDE-1:0] s_mosi;
-	wire [`SPIBITWIDE-1:0] s_miso;
+	reg [`SPIBITWIDE-1:0] s_miso;
+	wire [`SPIBITWIDE-1:0] s_mosi;
 	wire s_clk;
 	wire s_css;
 
