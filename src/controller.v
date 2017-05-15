@@ -61,7 +61,7 @@ module controller(
 		if (p_write==1'b1) begin
 			if (status==2'b10) begin
 				//当写信号为低时，将输出缓冲区中的数据输出
-				assign [`APBBITWIDE-1:0]p_data = (p_write==1'b0)?p_data_out:32'bz;
+				assign p_data[`APBBITWIDE-1:0] = (p_write==1'b0)?p_data_out:32'bz;
 				//当写信号为高时，将输入数据放入写数据缓冲区
 				p_data_in = p_data;	
 			end
