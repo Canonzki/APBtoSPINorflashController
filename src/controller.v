@@ -71,12 +71,12 @@ module controller(
 	//重置逻辑
 	always @(*) begin
 		if (p_reset_n == 1'b0) begin
-			assign s_css <= ~p_reset_n;
-			status <= 2'b00;
+			assign s_css = ~p_reset_n;
+			status = 2'b00;
 			fdcount = 8'b00000000;
 		end
 		else begin
-			assign s_css <= ~p_enable;
+			assign s_css = ~p_enable;
 		end
 	end
 
@@ -124,6 +124,7 @@ module controller(
 						4:begin
 							s_mosi<=p_addr[15:8];
 						end
+					 endcase
 				end
 				1'b1:begin
 					case(fdcount)
@@ -139,7 +140,9 @@ module controller(
 						4:begin
 							s_mosi<=p_addr[15:8];
 						end
+					endcase
 				end
+			endcase
 		end
 		else (status==2'b10) begin
 			case(p_write)
@@ -157,6 +160,7 @@ module controller(
 						4:begin
 							p_data_out[7:0]<=s_miso;
 						end
+					endcase
 				end
 				1'b1:begin
 					case(fdcount)
@@ -172,7 +176,9 @@ module controller(
 						4:begin
 							s_mosi<=p_data_out[7:0];
 						end
+					endcase
 				end
+			endcase
 		end
 	end
 
