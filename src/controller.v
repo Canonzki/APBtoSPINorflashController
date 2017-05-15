@@ -5,7 +5,6 @@
 
 
 module controller(
-
 		//amba引脚
 		p_clk,     //时钟
 		p_reset_n, //复位,低位有效
@@ -42,6 +41,10 @@ module controller(
 
 	wire p_clk;
 	wire s_clk;
+
+	wire [`SPIBITWIDE-1:0] s_miso;
+
+	reg [`SPIBITWIDE-1:0] s_mosi;
 
 	reg [`APBBITWIDE-1:0] p_addr;
 	reg [`APBBITWIDE-1:0] p_data;
@@ -113,75 +116,74 @@ module controller(
 				1'b0:begin
 					case(fdcount)
 						1:begin
-							s_mosi<=8'b00000001;
+							s_mosi <= 8'b00000001;
 						end
 						2:begin
-							s_mosi<=p_addr[31:24];
+							s_mosi <= p_addr[31:24];
 						end
 						3:begin
-							s_mosi<=p_addr[23:16];
+							s_mosi <= p_addr[23:16];
 						end
 						4:begin
-							s_mosi<=p_addr[15:8];
+							s_mosi <= p_addr[15:8];
 						end
 					 endcase
 				end
 				1'b1:begin
 					case(fdcount)
 						1:begin
-							s_mosi<=8'b00000010;
+							s_mosi <= 8'b00000010;
 						end
 						2:begin
-							s_mosi<=p_addr[31:24];
+							s_mosi <= p_addr[31:24];
 						end
 						3:begin
-							s_mosi<=p_addr[23:16];
+							s_mosi <= p_addr[23:16];
 						end
 						4:begin
-							s_mosi<=p_addr[15:8];
+							s_mosi <= p_addr[15:8];
 						end
 					endcase
 				end
 			endcase
 		end
-		else (status==2'b10) begin
+		else if (status==2'b10) begin
 			case(p_write)
 				1'b0:begin
 					case(fdcount)
 						1:begin
-							p_data_out[31:24]<=s_miso;
+							p_data_out[31:24] <= s_miso;
 						end
 						2:begin
-							p_data_out[23:16]<=s_miso;
+							p_data_out[23:16] <= s_miso;
 						end
 						3:begin
-							p_data_out[15:8]<=s_miso;
+							p_data_out[15:8] <= s_miso;
 						end
 						4:begin
-							p_data_out[7:0]<=s_miso;
+							p_data_out[7:0] <= s_miso;
 						end
 					endcase
 				end
 				1'b1:begin
 					case(fdcount)
 						1:begin
-							s_mosi<=p_data_out[31:24];
+							s_mosi <= p_data_out[31:24];
 						end
 						2:begin
-							s_mosi<=p_data_out[23:16];
+							s_mosi <= p_data_out[23:16];
 						end
 						3:begin
-							s_mosi<=p_data_out[15:8];
+							s_mosi <= p_data_out[15:8];
 						end
 						4:begin
-							s_mosi<=p_data_out[7:0];
+							s_mosi <= p_data_out[7:0];
 						end
 					endcase
 				end
 			endcase
 		end
 	end
-
 
 
 	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(1'b1));
