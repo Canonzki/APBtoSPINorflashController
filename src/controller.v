@@ -12,7 +12,8 @@ module controller(
 		p_write,   //写信号高位表示要写
 		p_sel_x,   //片选信号，默认置1，表示永久选中该设备
 		p_enable,  //使能信号高电平有效
-		p_data,    //数据线，最高32bit，该引脚为inout类型，读和写的数据都要通过它
+		p_wdata,    //数据线，最高32bit，该引脚为out类型，读和写的数据都要通过它
+		p_rdata,    //数据线，最高32bit，该引脚为in类型，读和写的数据都要通过它
 
 
 		//spi引脚
@@ -51,25 +52,21 @@ module controller(
 	
 	reg s_css;
 
-	//状态寄存器两颗，00表示默认状态(idel)，01表示启动状态(setup)，10表示使能状态(enable)，11保留；
+	//状态寄存器两颗，x
 	reg [1:0]status;
 	reg [`APBBITWIDE-1:0] fdcount;
 
 	//数据双工通信控制
-	wire [`APBBITWIDE-1:0]p_data;
-	reg [`APBBITWIDE-1:0]p_data_in;
-	reg [`APBBITWIDE-1:0]p_data_out;
+	reg [`APBBITWIDE-1:0]p_rdata;
+	wire [`APBBITWIDE-1:0]p_wdata;
+	reg [`APBBITWIDE-1:0]p_data_r;
+	reg [`APBBITWIDE-1:0]p_data_w;
 	reg p_write;
 	always @(*) begin
-		if (p_write==1'b1) begin
-			if (status==2'b10) begin
-				//当写信号为低时，将输出缓冲区中的数据输出
-				assign p_data[`APBBITWIDE-1:0] = (p_write==1'b0)?p_data_out:32'bz;
-				//当写信号为高时，将输入数据放入写数据缓冲区
-				p_data_in = p_data;	
-			end
-		end
+		p_data_r = p_rdata;
 	end
+
+	assign p_rdata[`APBBITWIDE-1:0] = p_data_r;
 
 	//重置逻辑
 	always @(*) begin
@@ -152,32 +149,32 @@ module controller(
 				1'b0:begin
 					case(fdcount)
 						1:begin
-							p_data_out[31:24] <= s_miso;
+							p_data_r[31:24] <= s_miso;
 						end
 						2:begin
-							p_data_out[23:16] <= s_miso;
+							p_data_r[23:16] <= s_miso;
 						end
 						3:begin
-							p_data_out[15:8] <= s_miso;
+							p_data_r[15:8] <= s_miso;
 						end
 						4:begin
-							p_data_out[7:0] <= s_miso;
+							p_data_r[7:0] <= s_miso;
 						end
 					endcase
 				end
 				1'b1:begin
 					case(fdcount)
 						1:begin
-							s_mosi <= p_data_out[31:24];
+							s_mosi <= p_data_w[31:24];
 						end
 						2:begin
-							s_mosi <= p_data_out[23:16];
+							s_mosi <= p_data_w[23:16];
 						end
 						3:begin
-							s_mosi <= p_data_out[15:8];
+							s_mosi <= p_data_w[15:8];
 						end
 						4:begin
-							s_mosi <= p_data_out[7:0];
+							s_mosi <= p_data_w[7:0];
 						end
 					endcase
 				end
