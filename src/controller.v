@@ -49,7 +49,7 @@ module controller(
 	reg [`SPIBITWIDE-1:0] s_mosi;
 
 	reg [`APBBITWIDE-1:0] p_addr;
-	
+	reg p_write;
 	reg s_css;
 
 	//状态寄存器两颗，x
@@ -61,6 +61,8 @@ module controller(
 	reg [`APBBITWIDE-1:0]p_wdata;
 	reg [`APBBITWIDE-1:0]p_data_r;
 	reg [`APBBITWIDE-1:0]p_data_w;
+
+	
 
 
 	always @(*) begin
