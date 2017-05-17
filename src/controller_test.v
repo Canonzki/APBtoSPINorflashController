@@ -20,9 +20,9 @@ module controller_test();
 
 	initial
 		p_clk = 1'b0; //初始化clock引脚为0
-
-	always 
+always 
 		#8 p_clk = ~p_clk; //设置clock引脚电平的翻转
+	
 
 
 	controller norflash_contorller(
