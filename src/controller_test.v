@@ -11,8 +11,8 @@ module controller_test();
 	reg p_write;
 	reg p_sel_x;
 	reg p_enable;
-	wire [`APBBITWIDE-1:0] p_data;
-
+	wire [`APBBITWIDE-1:0] p_wdata;
+	wire [`APBBITWIDE-1:0] p_rdata;
 	reg [`SPIBITWIDE-1:0] s_miso;
 	wire [`SPIBITWIDE-1:0] s_mosi;
 	wire s_clk;
@@ -32,7 +32,8 @@ module controller_test();
 									.p_write(p_write), 
 									.p_sel_x(p_sel_x), 
 									.p_enable(p_enable),
-									.p_data(p_data),  
+									.p_wdata(p_wdata),  
+									.p_rdata(p_rdata),  
 									//spi引脚
 									.s_mosi(s_mosi),  
 									.s_miso(s_miso),  
