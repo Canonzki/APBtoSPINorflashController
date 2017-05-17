@@ -31,7 +31,8 @@ module controller(
 	input p_sel_x;
 	input p_enable;
 
-	inout [`APBBITWIDE-1:0] p_data;
+	input [`APBBITWIDE-1:0] p_wdata;
+	output [`APBBITWIDE-1:0] p_rdata;
 
 	//spi引脚
 	input [`SPIBITWIDE-1:0] s_miso;
@@ -48,7 +49,6 @@ module controller(
 	reg [`SPIBITWIDE-1:0] s_mosi;
 
 	reg [`APBBITWIDE-1:0] p_addr;
-	reg [`APBBITWIDE-1:0] p_data;
 	
 	reg s_css;
 
@@ -57,13 +57,14 @@ module controller(
 	reg [`APBBITWIDE-1:0] fdcount;
 
 	//数据双工通信控制
-	reg [`APBBITWIDE-1:0]p_rdata;
-	wire [`APBBITWIDE-1:0]p_wdata;
+	wire [`APBBITWIDE-1:0]p_rdata;
+	reg [`APBBITWIDE-1:0]p_wdata;
 	reg [`APBBITWIDE-1:0]p_data_r;
 	reg [`APBBITWIDE-1:0]p_data_w;
-	reg p_write;
+
+
 	always @(*) begin
-		p_data_r = p_rdata;
+		p_data_w = p_wdata;
 	end
 
 	assign p_rdata[`APBBITWIDE-1:0] = p_data_r;
