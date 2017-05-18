@@ -23,34 +23,52 @@ module controller_test();
 
 
 	reg [`APBBITWIDE-1:0] flash0;
-
+	reg [`APBBITWIDE-1:0] the_read_data;
 
 	reg [`SPIBITWIDE-1:0] count = 8'b00000000;
 
-	initial
+	initial begin
 		p_clk <= 1'b0; //初始化clock引脚为0
 		p_reset_n <= 1'b1;
 		p_write <= 1'b0;
 		p_sel_x <= 1'b1;
 		p_enable <= 1'b0;
+	end
+		
+	always @(*) begin
+		the_read_data = p_rdata;
+	end
 
 	always 
 		#8 p_clk = ~p_clk; //设置clock引脚电平的翻转
 
 	
-	initial 
+	initial begin
 		#16
 		p_reset_n <= 1'b0;
 		p_write <= 1'b1;
 		p_enable <= 1'b0;
 		p_addr <= 32'd0;
 		p_wdata <= 32'b11111111000000001111111100000000;
+	end
+
+	initial begin
+		#80
+		p_reset_n <= 1'b1;
+		p_enable = 1'b1;
+		#16
+		p_reset_n <= 1'b0;
+		p_write <= 1'b0;
+		p_enable <= 1'b0;
+		p_addr <= 32'd0;
+	end
+		
 
 	always @(posedge s_clk) begin
 		count <= count + 1;
 	end
 
-	always @(negedge s_css && posedge s_clk) begin
+	always @(negedge s_css) begin
 		count <= 8'b00000000;
 	end
 
@@ -70,34 +88,34 @@ module controller_test();
 				flash_addr[15:8] <= s_mosi;
 			end
 			5:begin
-				if(flash_addr == 0'd0 and en_write == 8'b00000010) begin
+				if(flash_addr == 0'd0 && en_write == 8'b00000010) begin
 					flash0[31:24] <= s_mosi;
 				end
-				else if(flash_addr == 0'd0 and en_write == 8'b00000001) begin
+				else if(flash_addr == 0'd0 && en_write == 8'b00000001) begin
 					s_miso <= flash0[31:24];
 				end
 			end
 			6:begin
-				if(flash_addr == 0'd0 and en_write == 8'b00000010) begin
+				if(flash_addr == 0'd0 && en_write == 8'b00000010) begin
 					flash0[23:16] <= s_mosi;
 				end
-				else if(flash_addr == 0'd0 and en_write == 8'b00000001) begin
+				else if(flash_addr == 0'd0 && en_write == 8'b00000001) begin
 					s_miso <= flash0[23:16];
 				end
 			end
 			7:begin
-				if(flash_addr == 0'd0 and en_write == 8'b00000010) begin
+				if(flash_addr == 0'd0 && en_write == 8'b00000010) begin
 					flash0[15:8] <= s_mosi;
 				end
-				else if(flash_addr == 0'd0 and en_write == 8'b00000001) begin
+				else if(flash_addr == 0'd0 && en_write == 8'b00000001) begin
 					s_miso <= flash0[15:8];
 				end
 			end
 			8:begin
-				if(flash_addr == 0'd0 and en_write == 8'b00000010) begin
+				if(flash_addr == 0'd0 && en_write == 8'b00000010) begin
 					flash0[7:0] <= s_mosi;
 				end
-				else if(flash_addr == 0'd0 and en_write == 8'b00000001) begin
+				else if(flash_addr == 0'd0 && en_write == 8'b00000001) begin
 					s_miso <= flash0[7:0];
 				end
 			end
