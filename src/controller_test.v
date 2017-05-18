@@ -11,18 +11,98 @@ module controller_test();
 	reg p_write;
 	reg p_sel_x;
 	reg p_enable;
-	wire [`APBBITWIDE-1:0] p_wdata;
+	reg [`APBBITWIDE-1:0] p_wdata;
 	wire [`APBBITWIDE-1:0] p_rdata;
 	reg [`SPIBITWIDE-1:0] s_miso;
 	wire [`SPIBITWIDE-1:0] s_mosi;
 	wire s_clk;
 	wire s_css;
 
+	reg [`SPIBITWIDE-1:0] en_write;
+	reg [`SPIBITWIDE-1:0] flash_addr = 0'd0;
+
+
+	reg [`APBBITWIDE-1:0] flash0;
+
+
+	reg [`SPIBITWIDE-1:0] count = 8'b00000000;
+
 	initial
 		p_clk = 1'b0; //初始化clock引脚为0
-always 
+		p_reset_n = 1'b1;
+		p_write = 1'b0;
+		p_sel_x = 1'b1,
+		p_enable = 1'b0,
+
+	always 
 		#8 p_clk = ~p_clk; //设置clock引脚电平的翻转
+
 	
+	initial 
+		#16
+		p_reset_n = 1'b0;
+		p_write = 1'b1;
+		p_enable = 1'b0;
+		p_addr = 32'd0;
+		p_wdata = 32'b11111111000000001111111100000000;
+
+	always @(posedge s_clk) begin
+		count <= count + 1;
+	end
+
+	always @(negedge s_css and posedge s_clk) begin
+		count <= 8'b00000000;
+	end
+
+
+	always @(posedge p_clk) begin
+		case(count)
+			1:begin
+				en_write <= s_mosi;
+			end 
+			2:begin
+				flash_addr[31:24] <= s_mosi;
+			end
+			3:begin
+				flash_addr[23:16] <= s_mosi;
+			end
+			4:begin
+				flash_addr[15:8] <= s_mosi;
+			end
+			5:begin
+				if(flash_addr == 0'd0 and en_write == 8'b00000010) begin
+					flash0[31:24] <= s_mosi;
+				end
+				else if(flash_addr == 0'd0 and en_write == 8'b00000001) begin
+					s_miso <= flash0[31:24];
+				end
+			end
+			6:begin
+				if(flash_addr == 0'd0 and en_write == 8'b00000010) begin
+					flash0[23:16] <= s_mosi;
+				end
+				else if(flash_addr == 0'd0 and en_write == 8'b00000001) begin
+					s_miso <= flash0[23:16];
+				end
+			end
+			7:begin
+				if(flash_addr == 0'd0 and en_write == 8'b00000010) begin
+					flash0[15:8] <= s_mosi;
+				end
+				else if(flash_addr == 0'd0 and en_write == 8'b00000001) begin
+					s_miso <= flash0[15:8];
+				end
+			end
+			8:begin
+				if(flash_addr == 0'd0 and en_write == 8'b00000010) begin
+					flash0[7:0] <= s_mosi;
+				end
+				else if(flash_addr == 0'd0 and en_write == 8'b00000001) begin
+					s_miso <= flash0[7:0];
+				end
+			end
+		endcase
+	end
 
 
 	controller norflash_contorller(

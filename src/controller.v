@@ -50,7 +50,7 @@ module controller(
 
 	reg [`APBBITWIDE-1:0] p_addr;
 	reg p_write;
-	reg s_css;
+	reg s_css_reg;
 
 	//状态寄存器两颗，x
 	reg [1:0]status;
@@ -62,7 +62,7 @@ module controller(
 	reg [`APBBITWIDE-1:0]p_data_r;
 	reg [`APBBITWIDE-1:0]p_data_w;
 
-	
+
 
 
 	always @(*) begin
@@ -70,16 +70,17 @@ module controller(
 	end
 
 	assign p_rdata[`APBBITWIDE-1:0] = p_data_r;
+	assign s_css = s_css_reg;
 
 	//重置逻辑
 	always @(*) begin
 		if (p_reset_n == 1'b0) begin
-			assign s_css = ~p_reset_n;
+			s_css_reg = ~p_reset_n;
 			status = 2'b00;
 			fdcount = 8'b00000000;
 		end
 		else begin
-			assign s_css = ~p_enable;
+			s_css_reg = ~p_enable;
 		end
 	end
 
