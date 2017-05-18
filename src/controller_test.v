@@ -19,7 +19,7 @@ module controller_test();
 	wire s_css;
 
 	reg [`SPIBITWIDE-1:0] en_write;
-	reg [`SPIBITWIDE-1:0] flash_addr = 0'd0;
+	reg [`APBBITWIDE-1:0] flash_addr = 0'd0;
 
 
 	reg [`APBBITWIDE-1:0] flash0;
@@ -28,11 +28,11 @@ module controller_test();
 	reg [`SPIBITWIDE-1:0] count = 8'b00000000;
 
 	initial
-		p_clk = 1'b0; //初始化clock引脚为0
-		p_reset_n = 1'b1;
-		p_write = 1'b0;
-		p_sel_x = 1'b1,
-		p_enable = 1'b0,
+		p_clk <= 1'b0; //初始化clock引脚为0
+		p_reset_n <= 1'b1;
+		p_write <= 1'b0;
+		p_sel_x <= 1'b1;
+		p_enable <= 1'b0;
 
 	always 
 		#8 p_clk = ~p_clk; //设置clock引脚电平的翻转
@@ -40,17 +40,17 @@ module controller_test();
 	
 	initial 
 		#16
-		p_reset_n = 1'b0;
-		p_write = 1'b1;
-		p_enable = 1'b0;
-		p_addr = 32'd0;
-		p_wdata = 32'b11111111000000001111111100000000;
+		p_reset_n <= 1'b0;
+		p_write <= 1'b1;
+		p_enable <= 1'b0;
+		p_addr <= 32'd0;
+		p_wdata <= 32'b11111111000000001111111100000000;
 
 	always @(posedge s_clk) begin
 		count <= count + 1;
 	end
 
-	always @(negedge s_css and posedge s_clk) begin
+	always @(negedge s_css && posedge s_clk) begin
 		count <= 8'b00000000;
 	end
 
