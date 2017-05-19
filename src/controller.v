@@ -20,7 +20,7 @@ module controller(
 		s_miso,     //主设备输入，从设备输出，在这里controller是从设备，所以是个out类型的引脚
 		s_mosi,     //主设备输出，从设备输入，在这里controller是主设备，所以是个输入的引脚
 		s_clk,      //时钟位，由主设备产生，所以是个out类型的引脚
-		s_css,		//从设备使能信号，同样由主设备输出，是个out类型的引脚
+		s_css,		//从设备使能信号，同样由主设备输出，是个out类型的引脚,低位有效
 	);
 
 	//amba引脚
@@ -48,8 +48,8 @@ module controller(
 
 	reg [`SPIBITWIDE-1:0] s_mosi;
 
-	reg [`APBBITWIDE-1:0] p_addr;
-	reg p_write;
+	//reg [`APBBITWIDE-1:0] p_addr;
+	//reg p_write;
 	reg s_css_reg;
 
 	//状态寄存器两颗，x
@@ -58,7 +58,7 @@ module controller(
 
 	//数据双工通信控制
 	wire [`APBBITWIDE-1:0]p_rdata;
-	reg [`APBBITWIDE-1:0]p_wdata;
+	//reg [`APBBITWIDE-1:0]p_wdata;
 	reg [`APBBITWIDE-1:0]p_data_r;
 	reg [`APBBITWIDE-1:0]p_data_w;
 
@@ -70,18 +70,19 @@ module controller(
 	end
 
 	assign p_rdata[`APBBITWIDE-1:0] = p_data_r;
-	assign s_css = s_css_reg;
+	//assign s_css = s_css_reg;
+	assign s_css = ~(~p_reset_n&p_sel_x);
 
 	//重置逻辑
 	always @(*) begin
 		if (p_reset_n == 1'b0) begin
-			s_css_reg = ~p_reset_n;
+			//s_css_reg = ~p_reset_n;
 			status = 2'b00;
 			fdcount = 8'b00000000;
 		end
-		else begin
-			s_css_reg = ~p_enable;
-		end
+		// else begin
+		// 	s_css_reg = ~p_enable;
+		// end
 	end
 
 	//状态控制逻辑
@@ -187,7 +188,7 @@ module controller(
 	end
 
 
-	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(1'b1));
+	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(p_reset_n));
 
 
 endmodule
