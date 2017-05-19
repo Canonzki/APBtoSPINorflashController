@@ -7,7 +7,7 @@
 module controller(
 		//amba引脚
 		p_clk,     //时钟
-		p_reset_n, //复位,低位有效
+		//p_reset_n, //复位,低位有效
 		p_addr,    //地址线最高32bit
 		p_write,   //写信号高位表示要写
 		p_sel_x,   //片选信号，默认置1，表示永久选中该设备
@@ -25,7 +25,7 @@ module controller(
 
 	//amba引脚
 	input p_clk;
-	input p_reset_n;
+	//input p_reset_n;
 	input [`APBBITWIDE-1:0] p_addr;
 	input p_write;
 	input p_sel_x;
@@ -76,7 +76,7 @@ module controller(
 
 	//重置逻辑
 	always @(*) begin
-		if (p_reset_n == 1'b0) begin
+		if (p_sel_x == 1'b0) begin
 			//s_css_reg = ~p_reset_n;
 			status = 2'b00;
 			fdcount = 8'b00000000;
@@ -89,20 +89,18 @@ module controller(
 	//状态控制逻辑
 	always @(posedge p_clk) begin
 		fdcount = 8'b00000000;
-		if(p_reset_n==1'b1) begin
-			//当偏选信号为0时将状态置为idel
-			if (p_sel_x==1'b0) begin
-				status = 2'b00;
+		//当偏选信号为0时将状态置为idel
+		if (p_sel_x==1'b0) begin
+			status = 2'b00;
+		end
+		else if (p_sel_x==1'b1) begin
+			//当偏选信号为1时且使能端为0时进入setup状态
+			if (p_enable==1'b0) begin
+				status = 2'b01
 			end
-			else if (p_sel_x==1'b1) begin
-				//当偏选信号为1时且使能端为0时进入setup状态
-				if (p_enable==1'b0) begin
-					status = 2'b01
-				end
-				else begin
-					//当偏选信号为1，且使能端为1时进入enable装爱
-					status = 2'b10;
-				end
+			else begin
+				//当偏选信号为1，且使能端为1时进入enable装爱
+				status = 2'b10;
 			end
 		end
 	end
@@ -189,7 +187,7 @@ module controller(
 	end
 
 
-	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(p_reset_n));
+	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(~p_sel_x));
 
 
 endmodule

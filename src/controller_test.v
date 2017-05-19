@@ -6,7 +6,7 @@
 module controller_test();
 
 	reg p_clk;
-	reg p_reset_n;
+	//reg p_reset_n;
 	reg [`APBBITWIDE-1:0] p_addr;
 	reg p_write;
 	reg p_sel_x;
@@ -29,7 +29,7 @@ module controller_test();
 
 	initial begin
 		p_clk <= 1'b0; //初始化clock引脚为0
-		p_reset_n <= 1'b1;
+		//p_reset_n <= 1'b1;
 		p_write <= 1'b0;
 		p_sel_x <= 1'b0;
 		p_enable <= 1'b0;
@@ -45,7 +45,7 @@ module controller_test();
 	
 	initial begin
 		#16
-		p_reset_n <= 1'b0;
+		//p_reset_n <= 1'b0;
 		p_write <= 1'b1;
 		p_enable <= 1'b0;
 		p_addr <= 32'd0;
@@ -56,11 +56,11 @@ module controller_test();
 	initial begin
 		#32
 		p_sel_x = 1'b0;
-		p_reset_n = 1'b1;
+		//p_reset_n = 1'b1;
 		p_enable = 1'b1;
 		#40
 		p_sel_x <= 1'b1;
-		p_reset_n <= 1'b0;
+		//p_reset_n <= 1'b0;
 		p_write <= 1'b0;
 		p_enable <= 1'b0;
 		p_addr <= 32'd0;
@@ -127,7 +127,7 @@ module controller_test();
 
 	controller norflash_contorller(
 									.p_clk(p_clk),   
-									.p_reset_n(p_reset_n),
+									//.p_reset_n(p_reset_n),
 									.p_addr(p_addr),  
 									.p_write(p_write), 
 									.p_sel_x(p_sel_x), 
