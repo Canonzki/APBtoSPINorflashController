@@ -9,7 +9,7 @@ input rst;
 reg [1:0] cnt = 2'b00;
 reg clk_out;
 
-parameter =4;
+parameter N = 4;
 
 always @ (posedge clk_in or negedge rst) begin
 	if(!rst)
