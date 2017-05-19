@@ -54,11 +54,11 @@ module controller_test();
 	end
 
 	initial begin
-		#24
+		#32
 		p_sel_x = 1'b0;
 		p_reset_n = 1'b1;
 		p_enable = 1'b1;
-		#32
+		#40
 		p_sel_x <= 1'b1;
 		p_reset_n <= 1'b0;
 		p_write <= 1'b0;
@@ -147,7 +147,7 @@ module controller_test();
 	end
 
 	initial begin
-		#40 $finish;
+		#56 $finish;
 	end
 
 
