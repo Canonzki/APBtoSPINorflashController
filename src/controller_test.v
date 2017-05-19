@@ -31,7 +31,7 @@ module controller_test();
 		p_clk <= 1'b0; //初始化clock引脚为0
 		p_reset_n <= 1'b1;
 		p_write <= 1'b0;
-		p_sel_x <= 1'b1;
+		p_sel_x <= 1'b0;
 		p_enable <= 1'b0;
 	end
 		
@@ -50,20 +50,22 @@ module controller_test();
 		p_enable <= 1'b0;
 		p_addr <= 32'd0;
 		p_wdata <= 32'b11111111000000001111111100000000;
+		p_sel_x <= 1'b1;
 	end
 
 	initial begin
-		#80
-		p_reset_n <= 1'b1;
+		#24
+		p_sel_x = 1'b0;
+		p_reset_n = 1'b1;
 		p_enable = 1'b1;
-		#16
+		#32
+		p_sel_x <= 1'b1;
 		p_reset_n <= 1'b0;
 		p_write <= 1'b0;
 		p_enable <= 1'b0;
 		p_addr <= 32'd0;
 	end
 		
-
 	always @(posedge s_clk) begin
 		count <= count + 1;
 	end
@@ -142,6 +144,10 @@ module controller_test();
 	initial begin
 		$fsdbDumpfile("test.fsdb");
 		$fsdbDumpvars;
+	end
+
+	initial begin
+		#40 $finish;
 	end
 
 
