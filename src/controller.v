@@ -7,7 +7,7 @@
 module controller(
 		//amba引脚
 		p_clk,     //时钟
-		//p_reset_n, //复位,低位有效
+		p_reset_n, //复位,低位有效
 		p_addr,    //地址线最高32bit
 		p_write,   //写信号高位表示要写
 		p_sel_x,   //片选信号，默认置1，表示永久选中该设备
@@ -25,7 +25,7 @@ module controller(
 
 	//amba引脚
 	input p_clk;
-	//input p_reset_n;
+	input p_reset_n;
 	input [`APBBITWIDE-1:0] p_addr;
 	input p_write;
 	input p_sel_x;
@@ -188,7 +188,7 @@ module controller(
 
 
 	//fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(~p_sel_x));
-	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(1'b1));
+	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(p_reset_n));
 
 
 endmodule
