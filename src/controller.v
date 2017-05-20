@@ -187,7 +187,8 @@ module controller(
 	end
 
 
-	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(~p_sel_x));
+	//fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(~p_sel_x));
+	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(1'b1));
 
 
 endmodule

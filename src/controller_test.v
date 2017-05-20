@@ -44,7 +44,7 @@ module controller_test();
 
 	
 	initial begin
-		#16
+		#24
 		//p_reset_n <= 1'b0;
 		p_write <= 1'b1;
 		p_enable <= 1'b0;
@@ -54,11 +54,16 @@ module controller_test();
 	end
 
 	initial begin
-		#32
-		p_sel_x = 1'b0;
-		//p_reset_n = 1'b1;
-		p_enable = 1'b1;
 		#40
+		p_sel_x <= 1'b0;
+		//p_reset_n = 1'b1;
+		p_enable <= 1'b1;
+		
+	end
+
+
+	initial begin
+		#56
 		p_sel_x <= 1'b1;
 		//p_reset_n <= 1'b0;
 		p_write <= 1'b0;
@@ -147,7 +152,7 @@ module controller_test();
 	end
 
 	initial begin
-		#56 $finish;
+		#72 $finish;
 	end
 
 

@@ -16,6 +16,8 @@ always @ (posedge clk_in or negedge rst) begin
 	    begin
 	        cnt <= 0;
 	        clk_out <= 0;
+	        $display("%b,%b",cnt,clk_out);
+	        $display("branch 1");
 	    end
 	else 
 		begin
@@ -23,9 +25,13 @@ always @ (posedge clk_in or negedge rst) begin
 	            begin 
 	            	clk_out <= !clk_out; 
 	            	cnt<=0; 
+	            	$display("%b,%b",cnt,clk_out);
+	        		$display("branch 2");
 	            end
 	        else
 	          	cnt <= cnt + 1;
+	          	$display("%b,%b",cnt,clk_out);
+	        	$display("branch 3");
 	    end
 end
 
