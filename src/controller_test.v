@@ -27,9 +27,17 @@ module controller_test();
 
 	reg [`SPIBITWIDE-1:0] count = 8'b00000000;
 
+
+	initial begin
+		p_reset_n <= 1'b1;
+		#4
+		p_reset_n <= 1'b0;
+		#8
+		p_reset_n = 1'b1;
+	end
+
 	initial begin
 		p_clk <= 1'b0; //初始化clock引脚为0
-		p_reset_n <= 1'b1;
 		p_write <= 1'b0;
 		p_sel_x <= 1'b0;
 		p_enable <= 1'b0;
@@ -42,10 +50,11 @@ module controller_test();
 	always 
 		#8 p_clk = ~p_clk; //设置clock引脚电平的翻转
 
+
+
 	
 	initial begin
 		#24
-		p_reset_n <= 1'b1;
 		p_write <= 1'b1;
 		p_enable <= 1'b0;
 		p_addr <= 32'd0;
@@ -56,7 +65,6 @@ module controller_test();
 	initial begin
 		#40
 		p_sel_x <= 1'b0;
-		//p_reset_n = 1'b1;
 		p_enable <= 1'b1;
 		
 	end
