@@ -90,50 +90,74 @@ module controller_test();
 	end
 
 
-	always @(posedge p_clk) begin
+	always @(posedge s_clk) begin
 		case(count)
 			1:begin
 				en_write <= s_mosi;
+				$display("%b,%b,%b",s_clk,count,s_mosi);
+	    		$display("case 0");
 			end 
 			2:begin
 				flash_addr[31:24] <= s_mosi;
+				$display("%b,%b,%b",s_clk,count,s_mosi);
+	    		$display("case 1");
 			end
 			3:begin
 				flash_addr[23:16] <= s_mosi;
+				$display("%b,%b,%b",s_clk,count,s_mosi);
+	    		$display("case 2");
 			end
 			4:begin
 				flash_addr[15:8] <= s_mosi;
+				$display("%b,%b,%b",s_clk,count,s_mosi);
+	    		$display("case 3");
 			end
 			5:begin
-				if(flash_addr == 0'd0 && en_write == 8'b00000010) begin
+				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
 					flash0[31:24] <= s_mosi;
+					$display("%b,%b,%b",s_clk,count,s_mosi);
+	    			$display("case 4");
 				end
-				else if(flash_addr == 0'd0 && en_write == 8'b00000001) begin
+				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
 					s_miso <= flash0[31:24];
+					$display("%b,%b,%b",s_clk,count,s_miso);
+	    			$display("case 5");
 				end
 			end
 			6:begin
-				if(flash_addr == 0'd0 && en_write == 8'b00000010) begin
+				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
 					flash0[23:16] <= s_mosi;
+					$display("%b,%b,%b",s_clk,count,s_mosi);
+	    			$display("case 6");
 				end
-				else if(flash_addr == 0'd0 && en_write == 8'b00000001) begin
+				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
 					s_miso <= flash0[23:16];
+					$display("%b,%b,%b",s_clk,count,s_miso);
+	    			$display("case 7");
 				end
 			end
 			7:begin
-				if(flash_addr == 0'd0 && en_write == 8'b00000010) begin
+				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
 					flash0[15:8] <= s_mosi;
+					$display("%b,%b,%b",s_clk,count,s_mosi);
+	    			$display("case 8");
 				end
-				else if(flash_addr == 0'd0 && en_write == 8'b00000001) begin
+				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
 					s_miso <= flash0[15:8];
+					$display("%b,%b,%b",s_clk,count,s_miso);
+	    			$display("case 9");
 				end
 			end
 			8:begin
-				if(flash_addr == 0'd0 && en_write == 8'b00000010) begin
+				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
 					flash0[7:0] <= s_mosi;
+					$display("%b,%b,%b",s_clk,count,s_mosi);
+	    			$display("case 10");
 				end
-				else if(flash_addr == 0'd0 && en_write == 8'b00000001) begin
+				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
 					s_miso <= flash0[7:0];
+					$display("%b,%b,%b",s_clk,count,s_miso);
+	    			$display("case 12");
 				end
 			end
 		endcase

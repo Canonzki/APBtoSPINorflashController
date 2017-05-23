@@ -65,7 +65,7 @@ module controller(
 	reg [`APBBITWIDE-1:0] p_data_r;
 	reg [`APBBITWIDE-1:0] p_data_w;
 
-	assign s_clk = bpflag;
+	assign s_clk = bpflag & p_sel_x;
 
 	always 
 		#1 bpflag = ~bpflag;
@@ -97,21 +97,21 @@ module controller(
 		//当偏选信号为0时将状态置为idel
 		if (p_sel_x==1'b0) begin
 			status = 2'b00;
-			$display("%b,%b",p_sel_x,p_enable);
-	    	$display("branch 0");
+			//$display("%b,%b",p_sel_x,p_enable);
+	    	//$display("branch 0");
 		end
 		else if (p_sel_x==1'b1) begin
 			//当偏选信号为1时且使能端为0时进入setup状态
 			if (p_enable==1'b0) begin
 				status = 2'b01
-				$display("%b,%b",p_sel_x,p_enable);
-	    		$display("branch 1");
+				//$display("%b,%b",p_sel_x,p_enable);
+	    		//$display("branch 1");
 			end
 			else begin
 				//当偏选信号为1，且使能端为1时进入enable装爱
 				status = 2'b10;
-				$display("%b,%b",p_sel_x,p_enable);
-	    		$display("branch 2");
+				//$display("%b,%b",p_sel_x,p_enable);
+	    		//$display("branch 2");
 			end
 		end
 	end
@@ -133,23 +133,23 @@ module controller(
 					case(fdcount)
 						1:begin
 							s_mosi <= 8'b00000001;
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 0");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 0");
 						end
 						2:begin
 							s_mosi <= p_addr[31:24];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 1");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 1");
 						end
 						3:begin
 							s_mosi <= p_addr[23:16];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 2");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 2");
 						end
 						4:begin
 							s_mosi <= p_addr[15:8];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 3");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 3");
 						end
 					 endcase
 				end
@@ -157,23 +157,23 @@ module controller(
 					case(fdcount)
 						1:begin
 							s_mosi <= 8'b00000010;
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 4");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 4");
 						end
 						2:begin
 							s_mosi <= p_addr[31:24];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 5");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 5");
 						end
 						3:begin
 							s_mosi <= p_addr[23:16];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 6");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 6");
 						end
 						4:begin
 							s_mosi <= p_addr[15:8];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 7");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 7");
 						end
 					endcase
 				end
@@ -185,47 +185,47 @@ module controller(
 					case(fdcount)
 						5:begin
 							p_data_r[31:24] <= s_miso;
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 8");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 8");
 						end
 						6:begin
 							p_data_r[23:16] <= s_miso;
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 9");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 9");
 						end
 						7:begin
 							p_data_r[15:8] <= s_miso;
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 10");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 10");
 						end
 						8:begin
 							p_data_r[7:0] <= s_miso;
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 11");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 11");
 						end
-					endcase
+					endcase//
 				end
 				1'b1:begin
 					case(fdcount)
 						5:begin
 							s_mosi <= p_data_w[31:24];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 12");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 12");
 						end
 						6:begin
 							s_mosi <= p_data_w[23:16];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 13");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 13");
 						end
 						7:begin
 							s_mosi <= p_data_w[15:8];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 14");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 14");
 						end
 						8:begin
 							s_mosi <= p_data_w[7:0];
-							$display("%b,%b,%b",status,p_write,fdcount);
-							$display("case 15");
+							//$display("%b,%b,%b",status,p_write,fdcount);
+							//$display("case 15");
 						end
 					endcase
 				end
