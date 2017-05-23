@@ -48,7 +48,7 @@ module controller(
 
 	reg [`SPIBITWIDE-1:0] s_mosi;
 
-	reg bpflag = 0,
+	reg bpflag = 1;
 
 	//reg [`APBBITWIDE-1:0] p_addr;
 	//reg p_write;
@@ -133,15 +133,23 @@ module controller(
 					case(fdcount)
 						1:begin
 							s_mosi <= 8'b00000001;
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 0");
 						end
 						2:begin
 							s_mosi <= p_addr[31:24];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 1");
 						end
 						3:begin
 							s_mosi <= p_addr[23:16];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 2");
 						end
 						4:begin
 							s_mosi <= p_addr[15:8];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 3");
 						end
 					 endcase
 				end
@@ -149,15 +157,23 @@ module controller(
 					case(fdcount)
 						1:begin
 							s_mosi <= 8'b00000010;
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 4");
 						end
 						2:begin
 							s_mosi <= p_addr[31:24];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 5");
 						end
 						3:begin
 							s_mosi <= p_addr[23:16];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 6");
 						end
 						4:begin
 							s_mosi <= p_addr[15:8];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 7");
 						end
 					endcase
 				end
@@ -169,15 +185,23 @@ module controller(
 					case(fdcount)
 						1:begin
 							p_data_r[31:24] <= s_miso;
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 8");
 						end
 						2:begin
 							p_data_r[23:16] <= s_miso;
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 9");
 						end
 						3:begin
 							p_data_r[15:8] <= s_miso;
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 10");
 						end
 						4:begin
 							p_data_r[7:0] <= s_miso;
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 11");
 						end
 					endcase
 				end
@@ -185,15 +209,23 @@ module controller(
 					case(fdcount)
 						1:begin
 							s_mosi <= p_data_w[31:24];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 12");
 						end
 						2:begin
 							s_mosi <= p_data_w[23:16];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 13");
 						end
 						3:begin
 							s_mosi <= p_data_w[15:8];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 14");
 						end
 						4:begin
 							s_mosi <= p_data_w[7:0];
+							$display("%b,%b,%b",status,p_write,fdcount);
+							$display("case 15");
 						end
 					endcase
 				end

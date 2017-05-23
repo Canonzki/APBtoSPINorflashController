@@ -33,7 +33,7 @@ module controller_test();
 		#4
 		p_reset_n <= 1'b0;
 		#8
-		p_reset_n = 1'b1;
+		p_reset_n <= 1'b1;
 	end
 
 	initial begin
