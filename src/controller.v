@@ -48,6 +48,8 @@ module controller(
 
 	reg [`SPIBITWIDE-1:0] s_mosi;
 
+	reg bpflag = 0,
+
 	//reg [`APBBITWIDE-1:0] p_addr;
 	//reg p_write;
 
@@ -58,12 +60,15 @@ module controller(
 	reg [`APBBITWIDE-1:0] fdcount;
 
 	//数据双工通信控制
-	wire [`APBBITWIDE-1:0]p_rdata;
+	wire [`APBBITWIDE-1:0] p_rdata;
 	//reg [`APBBITWIDE-1:0]p_wdata;
-	reg [`APBBITWIDE-1:0]p_data_r;
-	reg [`APBBITWIDE-1:0]p_data_w;
+	reg [`APBBITWIDE-1:0] p_data_r;
+	reg [`APBBITWIDE-1:0] p_data_w;
 
+	assign s_clk = bpflag;
 
+	always 
+		#2 bpflag = ~bpflag;
 
 
 	always @(*) begin
@@ -79,7 +84,7 @@ module controller(
 		if (p_sel_x == 1'b0) begin
 			//s_css_reg = ~p_reset_n;
 			status = 2'b00;
-			fdcount = 8'b00000000;
+			//fdcount = 8'b00000000;
 		end
 		// else begin
 		// 	s_css_reg = ~p_enable;
@@ -87,22 +92,32 @@ module controller(
 	end
 
 	//状态控制逻辑
-	always @(posedge p_clk) begin
-		fdcount = 8'b00000000;
+	always @(negedge p_clk) begin
+		//fdcount = 8'b00000000;
 		//当偏选信号为0时将状态置为idel
 		if (p_sel_x==1'b0) begin
 			status = 2'b00;
+			$display("%b,%b",p_sel_x,p_enable);
+	    	$display("branch 0");
 		end
 		else if (p_sel_x==1'b1) begin
 			//当偏选信号为1时且使能端为0时进入setup状态
 			if (p_enable==1'b0) begin
 				status = 2'b01
+				$display("%b,%b",p_sel_x,p_enable);
+	    		$display("branch 1");
 			end
 			else begin
 				//当偏选信号为1，且使能端为1时进入enable装爱
 				status = 2'b10;
+				$display("%b,%b",p_sel_x,p_enable);
+	    		$display("branch 2");
 			end
 		end
+	end
+
+	always @(posedge p_clk) begin
+		fdcount = 8'b00000000;
 	end
 
 	//计数器，计算分频器分频之后当权处于子周期中的第fdcount周期
