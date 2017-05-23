@@ -1,7 +1,7 @@
 module pll_top (
 			fin,
 			fout,
-			se,
+			se,4
 			clk,
 			reset,
 			enable,
@@ -76,5 +76,5 @@ module pll_top (
 				.reset(reset),
 				.clkout(pulse)
 				);
-			
+
 endmodule

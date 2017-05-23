@@ -6,7 +6,6 @@
 module controller_test();
 
 	reg p_clk;
-	reg p_reset_n;
 	reg [`APBBITWIDE-1:0] p_addr;
 	reg p_write;
 	reg p_sel_x;
@@ -27,14 +26,6 @@ module controller_test();
 
 	reg [`SPIBITWIDE-1:0] count = 8'b00000000;
 
-
-	initial begin
-		p_reset_n <= 1'b1;
-		#4
-		p_reset_n <= 1'b0;
-		#8
-		p_reset_n <= 1'b1;
-	end
 
 	initial begin
 		p_clk <= 1'b0; //初始化clock引脚为0
@@ -70,7 +61,6 @@ module controller_test();
 	initial begin
 		#72
 		p_sel_x <= 1'b1;
-		//p_reset_n <= 1'b0;
 		p_write <= 1'b0;
 		p_addr <= 32'd0;
 	end
@@ -94,70 +84,46 @@ module controller_test();
 		case(count)
 			9:begin
 				en_write = s_mosi;
-				$display("%b,%b,%b",s_clk,count,s_mosi);
-	    		$display("case 0");
 			end 
 			10:begin
 				flash_addr[31:24] = s_mosi;
-				$display("%b,%b,%b",s_clk,count,s_mosi);
-	    		$display("case 1");
 			end
 			11:begin
 				flash_addr[23:16] = s_mosi;
-				$display("%b,%b,%b",s_clk,count,s_mosi);
-	    		$display("case 2");
 			end
 			12:begin
 				flash_addr[15:8] = s_mosi;
-				$display("%b,%b,%b",s_clk,count,s_mosi);
-	    		$display("case 3");
 	    		if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
 	    			s_miso = flash0[31:24];
-					$display("%b,%b,%b",s_clk,count,s_miso);
-	    			$display("case 5");
 	    		end
 			end
 			13:begin
 				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
 					flash0[31:24] = s_mosi;
-					$display("%b,%b,%b",s_clk,count,s_mosi);
-	    			$display("case 4");
 				end
 				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
 					s_miso = flash0[23:16];
-					$display("%b,%b,%b",s_clk,count,s_miso);
-	    			$display("case 7");
 				end
 			end
 			14:begin
 				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
 					flash0[23:16] = s_mosi;
-					$display("%b,%b,%b",s_clk,count,s_mosi);
-	    			$display("case 6");
 				end
 				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
 					s_miso = flash0[15:8];
-					$display("%b,%b,%b",s_clk,count,s_miso);
-	    			$display("case 9");
 				end
 			end
 			15:begin
 				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
 					flash0[15:8] = s_mosi;
-					$display("%b,%b,%b",s_clk,count,s_mosi);
-	    			$display("case 8");
 				end
 				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
 					s_miso = flash0[7:0];
-					$display("%b,%b,%b",s_clk,count,s_miso);
-	    			$display("case 11");
 				end
 			end
 			16:begin
 				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
 					flash0[7:0] = s_mosi;
-					$display("%b,%b,%b",s_clk,count,s_mosi);
-	    			$display("case 10");
 				end
 			end
 		endcase
@@ -166,7 +132,6 @@ module controller_test();
 
 	controller norflash_contorller(
 									.p_clk(p_clk),   
-									.p_reset_n(p_reset_n),
 									.p_addr(p_addr),  
 									.p_write(p_write), 
 									.p_sel_x(p_sel_x), 
