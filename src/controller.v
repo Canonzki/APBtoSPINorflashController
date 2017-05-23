@@ -68,7 +68,7 @@ module controller(
 	assign s_clk = bpflag;
 
 	always 
-		#2 bpflag = ~bpflag;
+		#1 bpflag = ~bpflag;
 
 
 	always @(*) begin
@@ -183,22 +183,22 @@ module controller(
 			case(p_write)
 				1'b0:begin
 					case(fdcount)
-						1:begin
+						5:begin
 							p_data_r[31:24] <= s_miso;
 							$display("%b,%b,%b",status,p_write,fdcount);
 							$display("case 8");
 						end
-						2:begin
+						6:begin
 							p_data_r[23:16] <= s_miso;
 							$display("%b,%b,%b",status,p_write,fdcount);
 							$display("case 9");
 						end
-						3:begin
+						7:begin
 							p_data_r[15:8] <= s_miso;
 							$display("%b,%b,%b",status,p_write,fdcount);
 							$display("case 10");
 						end
-						4:begin
+						8:begin
 							p_data_r[7:0] <= s_miso;
 							$display("%b,%b,%b",status,p_write,fdcount);
 							$display("case 11");
@@ -207,22 +207,22 @@ module controller(
 				end
 				1'b1:begin
 					case(fdcount)
-						1:begin
+						5:begin
 							s_mosi <= p_data_w[31:24];
 							$display("%b,%b,%b",status,p_write,fdcount);
 							$display("case 12");
 						end
-						2:begin
+						6:begin
 							s_mosi <= p_data_w[23:16];
 							$display("%b,%b,%b",status,p_write,fdcount);
 							$display("case 13");
 						end
-						3:begin
+						7:begin
 							s_mosi <= p_data_w[15:8];
 							$display("%b,%b,%b",status,p_write,fdcount);
 							$display("case 14");
 						end
-						4:begin
+						8:begin
 							s_mosi <= p_data_w[7:0];
 							$display("%b,%b,%b",status,p_write,fdcount);
 							$display("case 15");
@@ -235,7 +235,7 @@ module controller(
 
 
 	//fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(~p_sel_x));
-	fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(p_reset_n));
+	//fdivision divider(.clk_out(s_clk),.clk_in(p_clk),.rst(p_reset_n));
 
 
 endmodule
