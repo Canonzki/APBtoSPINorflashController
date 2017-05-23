@@ -181,30 +181,30 @@ module controller(
 		end
 		else if (status==2'b10) begin
 			case(p_write)
-				1'b0:begin
-					case(fdcount)
-						5:begin
-							p_data_r[31:24] <= s_miso;
-							//$display("%b,%b,%b",status,p_write,fdcount);
-							//$display("case 8");
-						end
-						6:begin
-							p_data_r[23:16] <= s_miso;
-							//$display("%b,%b,%b",status,p_write,fdcount);
-							//$display("case 9");
-						end
-						7:begin
-							p_data_r[15:8] <= s_miso;
-							//$display("%b,%b,%b",status,p_write,fdcount);
-							//$display("case 10");
-						end
-						8:begin
-							p_data_r[7:0] <= s_miso;
-							//$display("%b,%b,%b",status,p_write,fdcount);
-							//$display("case 11");
-						end
-					endcase//
-				end
+				//1'b0:begin
+				//	case(fdcount)
+				//		5:begin
+				//			p_data_r[31:24] <= s_miso;
+				//			//$display("%b,%b,%b",status,p_write,fdcount);
+				//			//$display("case 8");
+				//		end
+				//		6:begin
+				//			p_data_r[23:16] <= s_miso;
+				//			//$display("%b,%b,%b",status,p_write,fdcount);
+				//			//$display("case 9");
+				//		end
+				//		7:begin
+				//			p_data_r[15:8] <= s_miso;
+				//			//$display("%b,%b,%b",status,p_write,fdcount);
+				//			//$display("case 10");
+				//		end
+				//		8:begin
+				//			p_data_r[7:0] <= s_miso;
+				//			//$display("%b,%b,%b",status,p_write,fdcount);
+				//			//$display("case 11");
+				//		end
+				//	endcase//
+				//end
 				1'b1:begin
 					case(fdcount)
 						5:begin
@@ -230,6 +230,35 @@ module controller(
 					endcase
 				end
 			endcase
+		end
+	end
+
+	always @(negedge s_clk) begin
+		if (status==2'b10) begin
+			if(p_write==1'b0) begin
+				case(fdcount)
+					5:begin
+						p_data_r[31:24] <= s_miso;
+						//$display("%b,%b,%b",status,p_write,fdcount);
+						//$display("case 8");
+					end
+					6:begin
+						p_data_r[23:16] <= s_miso;
+						//$display("%b,%b,%b",status,p_write,fdcount);
+						//$display("case 9");
+					end
+					7:begin
+						p_data_r[15:8] <= s_miso;
+						//$display("%b,%b,%b",status,p_write,fdcount);
+						//$display("case 10");
+					end
+					8:begin
+						p_data_r[7:0] <= s_miso;
+						//$display("%b,%b,%b",status,p_write,fdcount);
+						//$display("case 11");
+					end
+				endcase//
+			end
 		end
 	end
 

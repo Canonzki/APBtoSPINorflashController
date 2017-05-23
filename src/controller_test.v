@@ -148,7 +148,7 @@ module controller_test();
 	    			$display("case 9");
 				end
 			end
-			10:begin
+			16:begin
 				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
 					flash0[7:0] <= s_mosi;
 					$display("%b,%b,%b",s_clk,count,s_mosi);
