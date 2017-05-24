@@ -13,8 +13,6 @@ module controller(
 		p_enable,  //使能信号高电平有效
 		p_wdata,    //数据线，最高32bit，该引脚为out类型，读和写的数据都要通过它
 		p_rdata,    //数据线，最高32bit，该引脚为in类型，读和写的数据都要通过它
-
-
 		//spi引脚
 		s_miso,     //主设备输入，从设备输出，在这里controller是从设备，所以是个out类型的引脚
 		s_mosi,     //主设备输出，从设备输入，在这里controller是主设备，所以是个输入的引脚
@@ -67,7 +65,7 @@ module controller(
 		p_data_w = p_wdata;
 	end
 
-	assign p_rdata[`APBBITWIDE-1:0] = p_data_r;
+	assign p_rdata[`APBBITWIDE-1:0] = (fdcount >= 8 && status == 2'b10)?p_data_r:32'd0;
 	assign s_css = ~p_sel_x;
 
 	//重置逻辑
