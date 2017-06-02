@@ -42,18 +42,18 @@ module controller(
 
 	wire [`SPIBITWIDE-1:0] s_miso;
 
-	reg [`SPIBITWIDE-1:0] s_mosi;
+	reg [`SPIBITWIDE-1:0] s_mosi = 0;
 
-	reg bpflag = 1;
+	reg bpflag = 1 = 0;
 
 	//状态寄存器两颗，x
 	reg [1:0]status;
-	reg [`APBBITWIDE-1:0] fdcount;
+	reg [`APBBITWIDE-1:0] fdcount = 0;
 
 	//数据双工通信控制
 	wire [`APBBITWIDE-1:0] p_rdata;
-	reg [`APBBITWIDE-1:0] p_data_r;
-	reg [`APBBITWIDE-1:0] p_data_w;
+	reg [`APBBITWIDE-1:0] p_data_r = 0;
+	reg [`APBBITWIDE-1:0] p_data_w = 0;
 
 	assign s_clk = bpflag & p_sel_x;
 
