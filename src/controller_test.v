@@ -5,24 +5,24 @@
 
 module controller_test();
 
-	reg p_clk;
+	reg p_clk = 0;
 	reg [`APBBITWIDE-1:0] p_addr;
-	reg p_write;
-	reg p_sel_x;
-	reg p_enable;
-	reg [`APBBITWIDE-1:0] p_wdata;
+	reg p_write = 0;
+	reg p_sel_x = 0;
+	reg p_enable = 0;
+	reg [`APBBITWIDE-1:0] p_wdata = 0;
 	wire [`APBBITWIDE-1:0] p_rdata;
-	reg [`SPIBITWIDE-1:0] s_miso;
+	reg [`SPIBITWIDE-1:0] s_miso = 0;
 	wire [`SPIBITWIDE-1:0] s_mosi;
 	wire s_clk;
 	wire s_css;
 
-	reg [`SPIBITWIDE-1:0] en_write;
+	reg [`SPIBITWIDE-1:0] en_write = 0;
 	reg [`APBBITWIDE-1:0] flash_addr = 0'd0;
 
 
-	reg [`APBBITWIDE-1:0] flash0;
-	reg [`APBBITWIDE-1:0] the_read_data;
+	reg [`APBBITWIDE-1:0] flash0 = 0;
+	reg [`APBBITWIDE-1:0] the_read_data = 0;
 
 	reg [`SPIBITWIDE-1:0] count = 8'b00000000;
 
