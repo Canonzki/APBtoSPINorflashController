@@ -1,7 +1,7 @@
 `timescale 1 ns / 100 ps
 `define APBBITWIDE 32
 `define SPIBITWIDE 8
-
+`define LINEWIDE 32
 
 
 module controller(
@@ -22,17 +22,17 @@ module controller(
 
 	//amba引脚
 	input p_clk;
-	input [`APBBITWIDE-1:0] p_addr;
+	input [`LINEWIDE-1:0] p_addr;
 	input p_write;
 	input p_sel_x;
 	input p_enable;
 
-	input [`APBBITWIDE-1:0] p_wdata;
-	output [`APBBITWIDE-1:0] p_rdata;
+	input [`LINEWIDE-1:0] p_wdata;
+	output [`LINEWIDE-1:0] p_rdata;
 
 	//spi引脚
-	input [`SPIBITWIDE-1:0] s_miso;
-	output [`SPIBITWIDE-1:0] s_mosi;
+	input [`LINEWIDE-1:0] s_miso;
+	output [`LINEWIDE-1:0] s_mosi;
 	
 	output s_clk;
 	output s_css;
@@ -40,32 +40,31 @@ module controller(
 	wire p_clk;
 	wire s_clk;
 
-	wire [`SPIBITWIDE-1:0] s_miso;
+	wire [`LINEWIDE-1:0] s_miso;
 
-	reg [`SPIBITWIDE-1:0] s_mosi = 0;
+	reg [`LINEWIDE-1:0] s_mosi = 0;
 
 	reg bpflag = 1 = 0;
 
 	//状态寄存器两颗，x
 	reg [1:0]status;
-	reg [`APBBITWIDE-1:0] fdcount = 0;
+	reg [`LINEWIDE-1:0] fdcount = 0;
 
 	//数据双工通信控制
-	wire [`APBBITWIDE-1:0] p_rdata;
-	reg [`APBBITWIDE-1:0] p_data_r = 0;
-	reg [`APBBITWIDE-1:0] p_data_w = 0;
+	wire [`LINEWIDE-1:0] p_rdata;
+	reg [`LINEWIDE-1:0] p_data_r = 0;
+	reg [`LINEWIDE-1:0] p_data_w = 0;
 
-	assign s_clk = bpflag & p_sel_x;
+	reg CPOL = 0;
+	reg CPHA = 0;
 
-	always 
-		#1 bpflag = ~bpflag;
-
+	assign s_clk = (CPOL==0)?(p_clk & p_sel_x):(~(p_clk & p_sel_x));
 
 	always @(*) begin
 		p_data_w = p_wdata;
 	end
 
-	assign p_rdata[`APBBITWIDE-1:0] = (fdcount >= 8 && status == 2'b10)?p_data_r:32'd0;
+	assign p_rdata[`LINEWIDE-1:0] = (fdcount >= 8 && status == 2'b10)?p_data_r:32'd0;
 	assign s_css = ~p_sel_x;
 
 	//重置逻辑
@@ -93,86 +92,123 @@ module controller(
 		end
 	end
 
-	always @(posedge p_clk) begin
+	always @(posedge p_sel_x) begin
 		fdcount = 8'b00000000;
 	end
 
 	//计数器，计算分频器分频之后当权处于子周期中的第fdcount周期
 	always @(posedge s_clk) begin
-		fdcount = fdcount + 1;
+		if(CPHA==CPOL) begin
+			fdcount = fdcount + 1;
+		end
 	end
+
+	//计数器，计算分频器分频之后当权处于子周期中的第fdcount周期
+	always @(negedge s_clk) begin
+		if(CPHA!=CPOL) begin
+			fdcount = fdcount + 1;
+		end
+	end
+
+
 
 	//当传输开始时
 	always @(posedge s_clk) begin
-		if (status==2'b01) begin
-			case(p_write)
-				1'b0:begin
-					case(fdcount)
-						end
-						2:begin
-							s_mosi = p_addr[31:24];
-						end
-						3:begin
-							s_mosi = p_addr[23:16];
-						end
-						4:begin
-							s_mosi = p_addr[15:8];
-						end
-					 endcase
-				end
-				1'b1:begin
-					case(fdcount)
-						1:begin
-							s_mosi = 8'b00000010;
-						end
-						2:begin
-							s_mosi = p_addr[31:24];
-						end
-						3:begin
-							s_mosi = p_addr[23:16];
-						end
-						4:begin
-							s_mosi = p_addr[15:8];
-						end
-					endcase
-				end
-			endcase
+		if(CPHA==CPOL) begin
+			//片选阶段
+			if (status==2'b01) begin
+				case(p_write)
+					1'b0:begin
+						//读操作
+						case(fdcount)
+							1:begin
+								s_mosi[31:8] <= p_addr[31:8];
+								s_mosi[7:0] <= 8'b00000010;
+							end
+						endcase
+					end
+					1'b1:begin
+						//写操作
+						case(fdcount)
+							1:begin
+								s_mosi[31:8] <= p_addr[31:8];
+								s_mosi[7:0] <= 8'b00000010;
+							end
+						endcase
+					end
+				endcase
+			end
+			//使能阶段
+			else if (status==2'b10) begin
+				case(p_write)
+					//读操作
+					1'b0:begin
+						case(fdcount)
+							2:begin
+								p_data_r[31:0] <= s_miso[31:0];
+							end
+						endcase//
+					end
+					//写操作
+					1'b1:begin
+						case(fdcount)
+							2:begin
+								s_mosi[31:0] = p_data_w[31:0];
+							end
+						endcase
+					end
+				endcase
+			end
 		end
-		else if (status==2'b10) begin
-			case(p_write)
-				1'b0:begin
-					case(fdcount)
-						5:begin
-							p_data_r[31:24] <= s_miso;
-						end
-						6:begin
-							p_data_r[23:16] <= s_miso;
-						end
-						7:begin
-							p_data_r[15:8] <= s_miso;
-						end
-						8:begin
-							p_data_r[7:0] <= s_miso;
-						end
-					endcase//
-				end
-				1'b1:begin
-					case(fdcount)
-						5:begin
-							s_mosi = p_data_w[31:24];
-						end
-						6:begin
-							s_mosi = p_data_w[23:16];
-						end
-						7:begin
-							s_mosi = p_data_w[15:8];
-						end
-						8:begin
-							s_mosi = p_data_w[7:0];
-						end
-					endcase
-				end
-			endcase
+	end
+
+		//当传输开始时
+	always @(negedge s_clk) begin
+		if(CPHA!=CPOL) begin
+			//片选阶段
+			if (status==2'b01) begin
+				case(p_write)
+					1'b0:begin
+						//读操作
+						case(fdcount)
+							1:begin
+								s_mosi[31:8] <= p_addr[31:8];
+								s_mosi[7:0] <= 8'b00000010;
+							end
+						endcase
+					end
+					1'b1:begin
+						//写操作
+						case(fdcount)
+							1:begin
+								s_mosi[31:8] <= p_addr[31:8];
+								s_mosi[7:0] <= 8'b00000010;
+							end
+						endcase
+					end
+				endcase
+			end
+			//使能阶段
+			else if (status==2'b10) begin
+				case(p_write)
+					//读操作
+					1'b0:begin
+						case(fdcount)
+							2:begin
+								p_data_r[31:0] <= s_miso[31:0];
+							end
+						endcase//
+					end
+					//写操作
+					1'b1:begin
+						case(fdcount)
+							2:begin
+								s_mosi[31:0] = p_data_w[31:0];
+							end
+						endcase
+					end
+				endcase
+			end
 		end
 	end
 endmodule

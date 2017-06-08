@@ -2,29 +2,30 @@
 
 `define APBBITWIDE 32
 `define SPIBITWIDE 8
+`define LINEWIDE 32
 
 module controller_test();
 
 	reg p_clk = 0;
-	reg [`APBBITWIDE-1:0] p_addr;
+	reg [`LINEWIDE-1:0] p_addr = 0;
 	reg p_write = 0;
 	reg p_sel_x = 0;
 	reg p_enable = 0;
-	reg [`APBBITWIDE-1:0] p_wdata = 0;
-	wire [`APBBITWIDE-1:0] p_rdata;
-	reg [`SPIBITWIDE-1:0] s_miso = 0;
-	wire [`SPIBITWIDE-1:0] s_mosi;
+	reg [`LINEWIDE-1:0] p_wdata = 0;
+	wire [`LINEWIDE-1:0] p_rdata;
+	reg [`LINEWIDE-1:0] s_miso = 0;
+	wire [`LINEWIDE-1:0] s_mosi;
 	wire s_clk;
 	wire s_css;
 
-	reg [`SPIBITWIDE-1:0] en_write = 0;
-	reg [`APBBITWIDE-1:0] flash_addr = 0'd0;
+	reg [`LINEWIDE-1:0] en_write = 0;
+	reg [`LINEWIDE-1:0] flash_addr = 0'd0;
 
 
-	reg [`APBBITWIDE-1:0] flash0 = 0;
-	reg [`APBBITWIDE-1:0] the_read_data = 0;
+	reg [`LINEWIDE-1:0] flash0 = 0;
+	reg [`LINEWIDE-1:0] the_read_data = 0;
 
-	reg [`SPIBITWIDE-1:0] count = 8'b00000000;
+	reg [`LINEWIDE-1:0] count = 8'b00000000;
 
 
 	initial begin
@@ -82,48 +83,19 @@ module controller_test();
 
 	always @(posedge s_clk) begin
 		case(count)
-			9:begin
-				en_write = s_mosi;
-			end 
-			10:begin
-				flash_addr[31:24] = s_mosi;
-			end
-			11:begin
-				flash_addr[23:16] = s_mosi;
-			end
-			12:begin
-				flash_addr[15:8] = s_mosi;
-	    		if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
-	    			s_miso = flash0[31:24];
+			1:begin
+				en_write = s_mosi[7:0];
+				flash_addr[31:8] = s_mosi[31:8];
+				if(flash_addr[31:8] == 24'd0 && en_write == 8'b00000001) begin
+	    			s_miso[31:0] = flash0[31:0];
 	    		end
-			end
-			13:begin
-				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
-					flash0[31:24] = s_mosi;
+			end 
+			2:begin
+				if(flash_addr[31:0] == 24'd0 && en_write == 8'b00000010) begin
+					flash0[31:0] = s_mosi[31:0];
 				end
 				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
-					s_miso = flash0[23:16];
-				end
-			end
-			14:begin
-				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
-					flash0[23:16] = s_mosi;
-				end
-				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
-					s_miso = flash0[15:8];
-				end
-			end
-			15:begin
-				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
-					flash0[15:8] = s_mosi;
-				end
-				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
-					s_miso = flash0[7:0];
-				end
-			end
-			16:begin
-				if(flash_addr == 32'd0 && en_write == 8'b00000010) begin
-					flash0[7:0] = s_mosi;
+					s_miso[31:0] = flash0[31:0];
 				end
 			end
 		endcase
