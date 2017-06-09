@@ -123,7 +123,7 @@ module controller(
 						case(fdcount)
 							1:begin
 								s_mosi[31:8] <= p_addr[31:8];
-								s_mosi[7:0] <= 8'b00000010;
+								s_mosi[7:0] <= 8'b00000001;
 							end
 						endcase
 					end
@@ -173,7 +173,7 @@ module controller(
 						case(fdcount)
 							1:begin
 								s_mosi[31:8] <= p_addr[31:8];
-								s_mosi[7:0] <= 8'b00000010;
+								s_mosi[7:0] <= 8'b00000001;
 							end
 						endcase
 					end
