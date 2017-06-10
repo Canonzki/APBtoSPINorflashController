@@ -58,7 +58,7 @@ module controller(
 	reg CPOL = 0;
 	reg CPHA = 0;
 
-	assign s_clk = (CPOL==0)?(p_clk & p_sel_x):(~(p_clk & p_sel_x));
+	assign s_clk = (CPOL==0)?(p_clk & (status!=0)):(~(p_clk & (status!=0)));
 
 	always @(*) begin
 		p_data_w = p_wdata;
@@ -162,6 +162,10 @@ module controller(
 		end
 	end
 
+	always @(*) begin
+	  	p_data_r[31:0] <= s_miso[31:0];
+	end
+
 		//当传输开始时
 	always @(negedge s_clk) begin
 		if(CPHA!=CPOL) begin
@@ -192,13 +196,13 @@ module controller(
 			else if (status==2'b10) begin
 				case(p_write)
 					//读操作
-					1'b0:begin
-						case(fdcount)
-							2:begin
-								p_data_r[31:0] <= s_miso[31:0];
-							end
-						endcase//
-					end
+					// 1'b0:begin
+					// 	case(fdcount)
+					// 		2:begin
+					// 			p_data_r[31:0] <= s_miso[31:0];
+					// 		end
+					// 	endcase//
+					// end
 					//写操作
 					1'b1:begin
 						case(fdcount)

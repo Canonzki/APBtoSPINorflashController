@@ -50,26 +50,34 @@ module controller_test();
 		p_write <= 1'b1;
 		p_addr <= 32'd0;
 		p_wdata <= 32'b11111111000000001111111100000000;
-		p_sel_x <= 1'b1;
+		//p_sel_x <= 1'b1;
 	end
 
 	initial begin
 		#56
-		p_sel_x <= 1'b0;
+		//p_sel_x <= 1'b0;
 	end
 
 
 	initial begin
 		#72
-		p_sel_x <= 1'b1;
+		//p_sel_x <= 1'b1;
 		p_write <= 1'b0;
 		p_addr <= 32'd0;
 	end
 
 	initial begin
-		#40 p_enable = ~p_enable;
+		#23 p_sel_x = 1'b1;
+		#32 p_sel_x = 1'b0;
+		#16 p_sel_x = 1'b1;
+		#32 p_sel_x = 1'b0;
+	end
+
+	initial begin
+		#41 p_enable = ~p_enable;
 		#16 p_enable = ~p_enable;
 		#32 p_enable = ~p_enable;
+		#16 p_enable = ~p_enable;
 	end
 		
 	always @(posedge s_clk) begin
@@ -83,14 +91,14 @@ module controller_test();
 
 	always @(posedge s_clk) begin
 		case(count)
-			1:begin
+			0:begin
 				en_write = s_mosi[7:0];
 				flash_addr[31:8] = s_mosi[31:8];
 				if(flash_addr[31:8] == 24'd0 && en_write == 8'b00000001) begin
 	    			s_miso[31:0] = flash0[31:0];
 	    		end
 			end 
-			2:begin
+			1:begin
 				if(flash_addr[31:8] == 24'd0 && en_write == 8'b00000010) begin
 					flash0[31:0] = s_mosi[31:0];
 				end
@@ -123,7 +131,7 @@ module controller_test();
 	end
 
 	initial begin
-		#104 $finish;
+		#112 $finish;
 	end
 
 
