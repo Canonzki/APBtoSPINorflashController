@@ -45,6 +45,7 @@ module controller(
 	reg [`LINEWIDE-1:0] s_mosi = 0;
 
 	reg bpflag = 1 = 0;
+	reg [`LINEWIDE-1:0]fifo;
 
 	//状态寄存器两颗，x
 	reg [1:0]status;
@@ -62,6 +63,7 @@ module controller(
 
 	always @(*) begin
 		p_data_w = p_wdata;
+		fifo = p_data_w;
 	end
 
 	assign p_rdata[`LINEWIDE-1:0] = (fdcount >= 8 && status == 2'b10)?p_data_r:32'd0;
@@ -153,7 +155,7 @@ module controller(
 					1'b1:begin
 						case(fdcount)
 							2:begin
-								s_mosi[31:0] = p_data_w[31:0];
+								s_mosi[31:0] = fifo[31:0];
 							end
 						endcase
 					end
@@ -207,7 +209,7 @@ module controller(
 					1'b1:begin
 						case(fdcount)
 							2:begin
-								s_mosi[31:0] = p_data_w[31:0];
+								s_mosi[31:0] = fifo[31:0];
 							end
 						endcase
 					end
