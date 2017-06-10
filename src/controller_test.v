@@ -91,10 +91,10 @@ module controller_test();
 	    		end
 			end 
 			2:begin
-				if(flash_addr[31:0] == 24'd0 && en_write == 8'b00000010) begin
+				if(flash_addr[31:8] == 24'd0 && en_write == 8'b00000010) begin
 					flash0[31:0] = s_mosi[31:0];
 				end
-				else if(flash_addr == 32'd0 && en_write == 8'b00000001) begin
+				else if(flash_addr[31:8] == 24'd0 && en_write == 8'b00000001) begin
 					s_miso[31:0] = flash0[31:0];
 				end
 			end

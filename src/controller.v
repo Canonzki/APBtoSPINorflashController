@@ -75,7 +75,7 @@ module controller(
 	end
 
 	//状态控制逻辑
-	always @(negedge p_clk) begin
+	always @(posedge p_clk) begin
 		//当偏选信号为0时将状态置为idel
 		if (p_sel_x==1'b0) begin
 			status = 2'b00;
