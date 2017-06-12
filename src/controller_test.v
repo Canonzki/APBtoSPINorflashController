@@ -67,7 +67,7 @@ module controller_test();
 	end
 
 	initial begin
-		#23 p_sel_x = 1'b1;
+		#25 p_sel_x = 1'b1;
 		#32 p_sel_x = 1'b0;
 		#16 p_sel_x = 1'b1;
 		#32 p_sel_x = 1'b0;
