@@ -56,23 +56,52 @@ module controller(
 	reg [`LINEWIDE-1:0] p_data_r = 0;
 	reg [`LINEWIDE-1:0] p_data_w = 0;
 
+	reg s_css_reg = 1;
+
 	reg CPOL = 0;
 	reg CPHA = 0;
 
-	assign s_clk = (CPOL==0)?(p_clk & (status!=0)):(~(p_clk & (status!=0)));
+	reg s_clk_reg =CPOL;
+
+	//assign s_clk = (CPOL==0)?(p_clk & (status!=0)):(~(p_clk & (status!=0)));
 
 	always @(*) begin
 		p_data_w = p_wdata;
 		fifo = p_data_w;
 	end
 
-	assign p_rdata[`LINEWIDE-1:0] = (fdcount >= 8 && status == 2'b10)?p_data_r:32'd0;
-	assign s_css = ~p_sel_x;
+	assign p_rdata[`LINEWIDE-1:0] = (fdcount >= 2 && status == 2'b10)?p_data_r:32'd0;
+
+	//assign s_css = (status!=0)?0:1;
+
+	always @(p_clk) begin
+		if (status!=0) begin
+	  		s_clk_reg <= p_clk;
+		end
+	end
+
+	assign s_clk = s_clk_reg;
+
+	assign s_css = s_css_reg;
+
 
 	//重置逻辑
-	always @(*) begin
-		if (p_sel_x == 1'b0) begin
-			status = 2'b00;
+	// always @(*) begin
+	// 	if (p_sel_x == 1'b0) begin
+	// 		status = 2'b00;
+	// 	end
+	// end
+
+	always @(negedge p_clk) begin
+		if (p_sel_x==1'b1) begin
+			status = 2'b01
+			if (s_clk!=1'b0) begin
+				status = 2'b01
+			end
+			else begin
+				//当偏选信号为1，且使能端为1时进入enable装爱
+				status = 2'b10;
+			end
 		end
 	end
 
@@ -81,8 +110,10 @@ module controller(
 		//当偏选信号为0时将状态置为idel
 		if (p_sel_x==1'b0) begin
 			status = 2'b00;
+			s_css_reg = 1;
 		end
 		else if (p_sel_x==1'b1) begin
+			s_css_reg = 0;
 			//当偏选信号为1时且使能端为0时进入setup状态
 			if (p_enable==1'b0) begin
 				status = 2'b01
@@ -99,15 +130,15 @@ module controller(
 	end
 
 	//计数器，计算分频器分频之后当权处于子周期中的第fdcount周期
-	always @(posedge s_clk) begin
-		if(CPHA==CPOL) begin
+	always @(posedge p_clk) begin
+		if(CPHA==CPOL && status!=0) begin
 			fdcount = fdcount + 1;
 		end
 	end
 
 	//计数器，计算分频器分频之后当权处于子周期中的第fdcount周期
-	always @(negedge s_clk) begin
-		if(CPHA!=CPOL) begin
+	always @(negedge p_clk) begin
+		if(CPHA!=CPOL && status!=0) begin
 			fdcount = fdcount + 1;
 		end
 	end
@@ -115,7 +146,7 @@ module controller(
 
 
 	//当传输开始时
-	always @(posedge s_clk) begin
+	always @(posedge p_clk) begin
 		if(CPHA==CPOL) begin
 			//片选阶段
 			if (status==2'b01) begin
@@ -169,7 +200,7 @@ module controller(
 	end
 
 		//当传输开始时
-	always @(negedge s_clk) begin
+	always @(negedge p_clk) begin
 		if(CPHA!=CPOL) begin
 			//片选阶段
 			if (status==2'b01) begin

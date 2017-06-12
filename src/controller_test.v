@@ -81,13 +81,19 @@ module controller_test();
 	end
 		
 	always @(posedge s_clk) begin
-		count <= count + 1;
+		count = count + 1;
 	end
 
 	always @(negedge s_css) begin
 		count <= 8'b00000000;
 	end
 
+
+	reg reg [`LINEWIDE-1:0] count_is_sb = 8'b00000000;
+
+	always @(posedge s_clk) begin
+	  count_is_sb = count;
+	end
 
 	always @(posedge s_clk) begin
 		case(count)
